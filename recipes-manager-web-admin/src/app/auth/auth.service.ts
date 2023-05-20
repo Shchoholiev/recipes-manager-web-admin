@@ -4,6 +4,7 @@ import { catchError, map } from 'rxjs/operators';
 import { ApiService } from '../network/api.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { GlobalUser } from './global-user.model';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class AuthService {
   private globalUserSubject = new BehaviorSubject<GlobalUser|null>(null);
   globalUser$ = this.globalUserSubject.asObservable();
 
-  constructor(private apiService: ApiService, private jwtHelper: JwtHelperService) { }
+  constructor(private apiService: ApiService, private jwtHelper: JwtHelperService, private router: Router) { }
 
   login(email: string, phone: string, password: string): Observable<any> {
     const query = `
@@ -44,6 +45,8 @@ export class AuthService {
   logout() {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    this.router.navigate(['/login']);
+    this.globalUserSubject.next(null);
   }
 
   refreshTokens(): Observable<any> {
@@ -84,20 +87,23 @@ export class AuthService {
     }
 
     const tokenPayload = this.jwtHelper.decodeToken(accessToken);
-    const tokenExpiration = new Date(tokenPayload.exp * 1000);
-    if (tokenExpiration < new Date(Date.now())) {
+    const tokenExpiration = tokenPayload.exp * 1000;
+    const now = new Date();
+    const utcNow = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    
+    if (tokenExpiration < utcNow) {
       return this.refreshTokens().pipe(map(tokens => {
-        console.log('Refreshed tokens:', tokens);
+        console.log('Refreshed tokens.');
         return true;
       }), catchError(error => {
-        console.error('Failed to refresh tokens:', error);
+        console.error('Failed to refresh tokens.');
         this.logout();
         return of(false);
       }));
     } else {
       const globalUser = this.createGlobalUserFromToken(accessToken);
       this.globalUserSubject.next(globalUser);
-      
+
       return of(true);
     }
   }

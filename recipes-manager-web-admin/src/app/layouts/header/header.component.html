@@ -18,8 +18,9 @@
                         <a class="nav-link" href="#">OpenAi Logs</a>
                     </li>
                 </ul>
-                <span class="navbar-text">
+                <span class="navbar-text d-flex gap-2 nav-item align-items-center">
                     Welcome, {{ globalUser?.name }}
+                    <button class="btn btn-link nav-link" (click)="onLogout()">Logout</button>
                 </span>
             </div>
         </div>

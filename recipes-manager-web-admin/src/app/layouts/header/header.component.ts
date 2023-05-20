@@ -15,4 +15,8 @@ export class HeaderComponent {
       this.globalUser = globalUser;
     });
   }
+
+  public onLogout(): void {
+    this.authService.logout();
+  }
 }
