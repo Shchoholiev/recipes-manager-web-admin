@@ -1,26 +1,25 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { ApiService } from '../network/api.service';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { GlobalUser } from './global-user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  // private currentUserSubject: BehaviorSubject<any>;
-  // public currentUser: Observable<any>;
+  private globalUserSubject = new BehaviorSubject<GlobalUser|null>(null);
+  globalUser$ = this.globalUserSubject.asObservable();
 
-  constructor(private apiService: ApiService) {
-    // this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(localStorage.getItem('currentUser')));
-    // this.currentUser = this.currentUserSubject.asObservable();
-  }
+  constructor(private apiService: ApiService, private jwtHelper: JwtHelperService) { }
 
   login(email: string, phone: string, password: string): Observable<any> {
     const query = `
       mutation Login($login: LoginModelInput!) {
         login(login: $login) {
-          accessToken
           refreshToken
+          accessToken
         }
       }
     `;
@@ -34,11 +33,11 @@ export class AuthService {
     return this.apiService.query(query, variables)
       .pipe(map(response => {
         const tokens = response.data.login;
-        // const user = { username: username, token: token };
         localStorage.setItem('accessToken', tokens.accessToken);
         localStorage.setItem('refreshToken', tokens.refreshToken);
-        // this.currentUserSubject.next(user);
-        return tokens;
+        const globalUser = this.createGlobalUserFromToken(tokens.accessToken);
+        this.globalUserSubject.next(globalUser);
+        return true;
       }));
   }
 
@@ -68,11 +67,48 @@ export class AuthService {
     return this.apiService.query(query, variables)
       .pipe(map(response => {
         const tokens = response.data.refreshUserToken;
-        // localStorage.setItem('accessToken', tokens.accessToken);
-        // this.tokensSubject.next(new Tokens(tokens.accessToken, this.currentTokensValue.refreshToken));
         localStorage.setItem('accessToken', tokens.accessToken);
         localStorage.setItem('refreshToken', tokens.refreshToken);
+
+        const globalUser = this.createGlobalUserFromToken(tokens.accessToken);
+        this.globalUserSubject.next(globalUser);
+
         return tokens;
       }));
+  }
+
+  isLoggedIn(): Observable<boolean> {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      return of(false);
+    }
+
+    const tokenPayload = this.jwtHelper.decodeToken(accessToken);
+    const tokenExpiration = new Date(tokenPayload.exp * 1000);
+    if (tokenExpiration < new Date(Date.now())) {
+      return this.refreshTokens().pipe(map(tokens => {
+        console.log('Refreshed tokens:', tokens);
+        return true;
+      }), catchError(error => {
+        console.error('Failed to refresh tokens:', error);
+        this.logout();
+        return of(false);
+      }));
+    } else {
+      const globalUser = this.createGlobalUserFromToken(accessToken);
+      this.globalUserSubject.next(globalUser);
+      
+      return of(true);
+    }
+  }
+
+  private createGlobalUserFromToken(accessToken: string): GlobalUser {
+    const decodedToken = this.jwtHelper.decodeToken(accessToken);
+    const globalUser = new GlobalUser();
+    globalUser.id = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+    globalUser.email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'];
+    globalUser.name = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
+    globalUser.roles = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+    return globalUser;
   }
 }

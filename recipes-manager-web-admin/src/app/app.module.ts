@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { JWT_OPTIONS, JwtModule } from '@auth0/angular-jwt';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -11,6 +12,10 @@ import { FormsModule } from '@angular/forms';
 import { MainComponent } from './main/main.component';
 import { HeaderComponent } from './layouts/header/header.component';
 import { FooterComponent } from './layouts/footer/footer.component';
+
+export function tokenGetter() {
+  return localStorage.getItem('accessToken');
+}
 
 @NgModule({
   declarations: [
@@ -24,7 +29,15 @@ import { FooterComponent } from './layouts/footer/footer.component';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    JwtModule.forRoot({
+      jwtOptionsProvider: {
+        provide: JWT_OPTIONS,
+        useFactory: () => ({
+          tokenGetter
+        })
+      }
+    })
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }

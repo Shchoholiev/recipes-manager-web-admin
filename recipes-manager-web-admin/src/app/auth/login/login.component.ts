@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Login } from './login.model';
 import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -11,14 +12,14 @@ export class LoginComponent {
   public loginModel: Login = new Login();
   public loginError: string = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   public onSubmit(): void {
     this.authService.login(this.loginModel.email, this.loginModel.phone, this.loginModel.password)
       .subscribe({
         next: (response) => {
           console.log('Login successful:', response);
-          // TODO: Redirect to home page
+          this.router.navigate(['/main']);
         },
         error: (error) => {
           console.error('Login failed:', error);
