@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { MainComponent } from './main/main.component';
 import { HeaderComponent } from './layouts/header/header.component';
 import { FooterComponent } from './layouts/footer/footer.component';
+import { OpenAiLogsComponent } from './open-ai-logs/open-ai-logs.component';
 
 export function tokenGetter() {
   return localStorage.getItem('accessToken');
@@ -23,7 +24,8 @@ export function tokenGetter() {
     LoginComponent,
     MainComponent,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    OpenAiLogsComponent
   ],
   imports: [
     BrowserModule,

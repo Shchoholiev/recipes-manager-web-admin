@@ -1,0 +1,20 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Request</th>
+      <th>Response</th>
+      <th>Created By ID</th>
+      <th>Created Date UTC</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let log of logs">
+      <td>{{ log.id }}</td>
+      <td>{{ log.request }}</td>
+      <td>{{ log.response }}</td>
+      <td>{{ log.createdById }}</td>
+      <td>{{ log.createdDateUtc }}</td>
+    </tr>
+  </tbody>
+</table>
