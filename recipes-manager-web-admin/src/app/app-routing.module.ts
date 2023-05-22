@@ -9,7 +9,9 @@ import { ApplicationLogsComponent } from './application-logs/application-logs.co
 const routes: Routes = [
   { path: '', redirectTo: '/main', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'main', component: MainComponent, canActivate: [AuthGuard] }
+  { path: 'main', component: MainComponent, canActivate: [AuthGuard] },
+  { path: 'logs', component: ApplicationLogsComponent, canActivate: [AuthGuard] },
+  { path: 'open-ai-logs', component: OpenAiLogsComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

@@ -30,4 +30,27 @@ export class OpenAiLogsService {
     };
     return this.apiService.query(query, variables);
   }
+
+  getOpenAiLogsByUserId(pageNumber: number, pageSize: number, userId: string): Observable<any> {
+    const query = `
+      query OpenAiLogsPageByUserId($userId: String!, $pageNumber: Int!, $pageSize: Int!) {
+        openAiLogsPageByUserId(userId: $userId, pageNumber: $pageNumber, pageSize: $pageSize) {
+          items {
+            id
+            request
+            response
+            createdById
+            createdDateUtc
+          }
+          totalPages
+        }
+      }
+    `;
+    const variables = { 
+      pageNumber, 
+      pageSize,
+      userId
+    };
+    return this.apiService.query(query, variables);
+  }
 }
