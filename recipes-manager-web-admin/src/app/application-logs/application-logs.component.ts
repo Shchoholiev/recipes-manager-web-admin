@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApplicationLogsService } from './application-logs.service';
 import { Log } from '../shared/log.model';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-application-logs',
@@ -13,14 +12,14 @@ export class ApplicationLogsComponent implements OnInit {
   public currentPage: number = 1;
   public totalPages: number = 1;
 
-  constructor(private applicationLogsService: ApplicationLogsService, private router: Router) {}
+  constructor(private applicationLogsService: ApplicationLogsService) {}
 
   ngOnInit(): void {
     this.setPage(this.currentPage);
   }
 
   public setPage(pageNumber: number): void {
-    this.applicationLogsService.getLogsPage(pageNumber, 2).subscribe(logs => {
+    this.applicationLogsService.getLogsPage(pageNumber, 10).subscribe(logs => {
       this.logs = logs.items;
       this.totalPages = logs.totalPages;
       this.currentPage = logs.pageNumber;
