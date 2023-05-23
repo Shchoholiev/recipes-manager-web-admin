@@ -30,6 +30,7 @@ jobs:
         run: |
           cd recipes-manager-web-admin
           npm install
+          export PATH="$PATH:$(pwd)/node_modules/.bin"
           ng build --prod
 
       - name: Upload artifact for deployment job
