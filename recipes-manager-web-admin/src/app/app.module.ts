@@ -14,6 +14,7 @@ import { HeaderComponent } from './layouts/header/header.component';
 import { FooterComponent } from './layouts/footer/footer.component';
 import { ApplicationLogsComponent } from './application-logs/application-logs.component';
 import { PaginationComponent } from './pagination/pagination.component';
+import { OpenAiLogsComponent } from './open-ai-logs/open-ai-logs.component';
 
 export function tokenGetter() {
   return localStorage.getItem('accessToken');
@@ -28,6 +29,7 @@ export function tokenGetter() {
     FooterComponent,
     ApplicationLogsComponent,
     PaginationComponent,
+    OpenAiLogsComponent
   ],
   imports: [
     BrowserModule,
