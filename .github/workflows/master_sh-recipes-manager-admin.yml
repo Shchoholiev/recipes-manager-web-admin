@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          path: 'recipes-manager-web-admin'
+          path: 'recipes-manager-web-admin/recipes-manager-web-admin'
 
       - name: Set up Node.js version
         uses: actions/setup-node@v1
