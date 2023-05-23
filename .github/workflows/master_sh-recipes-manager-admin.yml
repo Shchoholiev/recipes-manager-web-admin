@@ -36,4 +36,42 @@ jobs:
           app-name: 'sh-recipes-manager-admin'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1931FB89541C4E3FA0A96FD920EF5086 }}
-          package: ./dist
+          package: name: Build and deploy Node.js app to Azure Web App - sh-recipes-manager-admin
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18.x'
+
+      - name: Install Angular CLI
+        run: |
+          cd recipes-manager-web-admin
+          npm install @angular/cli
+        
+      - name: npm install and build
+        run: |
+          cd recipes-manager-web-admin
+          npm install
+          export PATH="$PATH:$(pwd)/node_modules/.bin"
+          ng build --configuration=production
+
+      - name: Deploy to Azure Web App
+        uses: Azure/webapps-deploy@v2
+        with:
+          app-name: 'sh-recipes-manager-admin'
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1931FB89541C4E3FA0A96FD920EF5086 }}
+          package: recipes-manager-web-admin/dist/
