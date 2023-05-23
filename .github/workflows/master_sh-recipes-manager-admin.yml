@@ -18,8 +18,17 @@ jobs:
         with:
           node-version: '18.x'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install Angular CLI
+        run: |
+          cd recipes-manager-web-admin
+          npm install @angular/cli
+        
+      - name: npm install and build
+        run: |
+          cd recipes-manager-web-admin
+          npm install
+          export PATH="$PATH:$(pwd)/node_modules/.bin"
+          ng build --configuration=production
 
       - name: Build Angular app
         run: ng build --configuration=production
