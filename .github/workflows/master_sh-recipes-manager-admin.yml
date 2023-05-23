@@ -24,14 +24,15 @@ jobs:
       - name: npm install, build, and test
         run: |
           cd recipes-manager-web-admin
+          npm install @angular/cli
           npm install
-          npm run build --if-present
+          ng build --prod
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: .
+          path: recipes-manager-web-admin/dist/
 
   deploy:
     runs-on: ubuntu-latest
