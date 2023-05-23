@@ -34,5 +34,5 @@ jobs:
         with:
           app-name: 'sh-recipes-manager-admin'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1931FB89541C4E3FA0A96FD920EF5086 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F455225E7605402C839BC3030B56C604 }}
           package: recipes-manager-web-admin/dist/recipes-manager-web-admin
