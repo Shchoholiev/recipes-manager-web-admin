@@ -89,7 +89,7 @@ export class AuthService {
     const tokenPayload = this.jwtHelper.decodeToken(accessToken);
     const tokenExpiration = tokenPayload.exp * 1000;
     const now = new Date();
-    const utcNow = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const utcNow = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
     
     if (tokenExpiration < utcNow) {
       return this.refreshTokens().pipe(map(tokens => {

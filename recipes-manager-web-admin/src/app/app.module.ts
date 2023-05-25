@@ -16,6 +16,7 @@ import { ApplicationLogsComponent } from './application-logs/application-logs.co
 import { PaginationComponent } from './pagination/pagination.component';
 import { UsersPageComponent } from './users/users-page/users-page.component';
 import { UserEditComponent } from './users/user-edit/user-edit.component';
+import { OpenAiLogsComponent } from './open-ai-logs/open-ai-logs.component';
 
 export function tokenGetter() {
   return localStorage.getItem('accessToken');
@@ -32,6 +33,7 @@ export function tokenGetter() {
     PaginationComponent,
     UsersPageComponent,
     UserEditComponent,
+    OpenAiLogsComponent
   ],
   imports: [
     BrowserModule,
