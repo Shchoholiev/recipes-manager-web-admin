@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UsersService } from '../users.service';
 import { User } from 'src/app/shared/user.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-users-page',
@@ -12,7 +13,7 @@ export class UsersPageComponent implements OnInit{
   public currentPage: number = 1;
   public totalPages: number = 1;
 
-  constructor(private usersService: UsersService){}
+  constructor(private usersService: UsersService, private router: Router){}
 
   ngOnInit(): void {
     this.setPage(this.currentPage);
@@ -32,5 +33,9 @@ export class UsersPageComponent implements OnInit{
     } else {
       return '';
     }
+  }
+
+  public editUser(user: User){
+    this.router.navigate(['/edit-user', user.id]);
   }
 }
