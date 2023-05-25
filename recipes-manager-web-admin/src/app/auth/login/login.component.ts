@@ -15,20 +15,24 @@ export class LoginComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   public onSubmit(): void {
-    this.authService.login(this.loginModel.email, this.loginModel.phone, this.loginModel.password)
-      .subscribe({
-        next: (response) => {
-          console.log('Login successful:', response);
-          this.router.navigate(['/main']);
-        },
-        error: (error) => {
-          console.error('Login failed:', error);
-          if (error.status === 500) {
-            this.loginError = 'Server error. Please try again later.';
-          } else {
-            this.loginError = 'Invalid email, phone, or password.';
-          }
-        }
-      });
+    this.login();
   }
+
+private login(): void {
+  this.authService.login(this.loginModel.email, this.loginModel.phone, this.loginModel.password)
+    .subscribe({
+      next: (response) => {
+        console.log('Login successful:', response);
+        this.router.navigate(['/main']);
+      },
+      error: (error) => {
+        console.error('Login failed:', error);
+        if (error.status === 500) {
+          this.loginError = 'Server error. Please try again later.';
+        } else {
+          this.loginError = error.message ?? 'Invalid email, phone, or password.';
+        }
+      }
+    });
+}
 }

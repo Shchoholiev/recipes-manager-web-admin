@@ -36,8 +36,9 @@ export class AuthService {
         const tokens = response.data.login;
         localStorage.setItem('accessToken', tokens.accessToken);
         localStorage.setItem('refreshToken', tokens.refreshToken);
-        const globalUser = this.createGlobalUserFromToken(tokens.accessToken);
-        this.globalUserSubject.next(globalUser);
+
+        this.setGlobalUserFromToken(tokens.accessToken);
+
         return true;
       }));
   }
@@ -73,8 +74,7 @@ export class AuthService {
         localStorage.setItem('accessToken', tokens.accessToken);
         localStorage.setItem('refreshToken', tokens.refreshToken);
 
-        const globalUser = this.createGlobalUserFromToken(tokens.accessToken);
-        this.globalUserSubject.next(globalUser);
+        this.setGlobalUserFromToken(tokens.accessToken);
 
         return tokens;
       }));
@@ -101,20 +101,30 @@ export class AuthService {
         return of(false);
       }));
     } else {
-      const globalUser = this.createGlobalUserFromToken(accessToken);
-      this.globalUserSubject.next(globalUser);
+      this.setGlobalUserFromToken(accessToken);
 
       return of(true);
     }
   }
 
-  private createGlobalUserFromToken(accessToken: string): GlobalUser {
+  private setGlobalUserFromToken(accessToken: string) {
     const decodedToken = this.jwtHelper.decodeToken(accessToken);
     const globalUser = new GlobalUser();
     globalUser.id = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
     globalUser.email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'];
     globalUser.name = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
     globalUser.roles = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-    return globalUser;
+    
+    if (!globalUser.roles.includes('Admin')) {
+      this.logout();
+      throw new Error('User is not an admin.');
+    }
+    
+    this.globalUserSubject.next(globalUser);
+  }
+
+  hasRole(role: string): boolean {
+    const globalUser = this.globalUserSubject.value;
+    return globalUser !== null && globalUser.roles.includes(role);
   }
 }
