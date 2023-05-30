@@ -14,6 +14,8 @@ import { HeaderComponent } from './layouts/header/header.component';
 import { FooterComponent } from './layouts/footer/footer.component';
 import { ApplicationLogsComponent } from './application-logs/application-logs.component';
 import { PaginationComponent } from './pagination/pagination.component';
+import { UsersPageComponent } from './users/users-page/users-page.component';
+import { UserEditComponent } from './users/user-edit/user-edit.component';
 import { OpenAiLogsComponent } from './open-ai-logs/open-ai-logs.component';
 
 export function tokenGetter() {
@@ -29,6 +31,8 @@ export function tokenGetter() {
     FooterComponent,
     ApplicationLogsComponent,
     PaginationComponent,
+    UsersPageComponent,
+    UserEditComponent,
     OpenAiLogsComponent
   ],
   imports: [
